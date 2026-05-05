@@ -150,3 +150,49 @@ export async function sendConflictReassignedEmail(
       </div>`,
   })
 }
+
+
+
+
+
+
+
+export async function sendExtensionApprovedEmail(
+  to: string,
+  name: string,
+  tableId: string,
+  newEndTime: Date
+) {
+  await sgMail.send({
+    to,
+    from: FROM,
+    subject: `BLIX — Tu reserva fue extendida: Mesa ${tableId}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto;">
+        <h2 style="color: #16a34a;">✅ Extensión aprobada</h2>
+        <p>Hola <strong>${name}</strong>, tu tiempo en la Mesa <strong>${tableId}</strong>
+           fue extendido.</p>
+        <p>Nuevo tiempo de finalización: 
+           <strong>${newEndTime.toLocaleTimeString('es-CO')}</strong></p>
+      </div>`,
+  })
+}
+
+export async function sendExtensionRejectedEmail(
+  to: string,
+  name: string,
+  tableId: string
+) {
+  await sgMail.send({
+    to,
+    from: FROM,
+    subject: `BLIX — No fue posible extender tu reserva: Mesa ${tableId}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto;">
+        <h2 style="color: #dc2626;">❌ Extensión no disponible</h2>
+        <p>Hola <strong>${name}</strong>, no fue posible extender tu tiempo en la Mesa
+           <strong>${tableId}</strong> porque hay otra reserva a continuación.</p>
+        <p>Por favor libera la mesa al terminar tu tiempo. ¡Gracias!</p>
+      </div>`,
+  })
+}
