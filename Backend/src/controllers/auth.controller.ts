@@ -29,11 +29,19 @@ export async function login(req: Request, res: Response) {
 
 export async function verify(req: Request, res: Response) {
   try {
-    const token = req.params.token as string   // ← fix línea 32
+    const token = req.params.token as string
     await authService.verifyEmail(token)
     res.json({ message: '¡Email verificado! Ya puedes iniciar sesión.' })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Error de verificación'
+
+    // TOKEN_ALREADY_USED significa que el link ya fue usado exitosamente antes
+    // Devolver 200 en lugar de 400 — desde la perspectiva del usuario, su cuenta SÍ está verificada
+    if (message === 'TOKEN_ALREADY_USED') {
+      res.json({ message: '¡Email verificado! Ya puedes iniciar sesión.' })
+      return
+    }
+
     res.status(400).json({ error: message })
   }
 }

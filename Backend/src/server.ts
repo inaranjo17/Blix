@@ -39,6 +39,13 @@ app.use('/api/reservations', extensionRoutes)  // /api/reservations/:id/extend
 app.use('/api/sensor',       sensorRoutes)
 app.use('/api/admin',        adminRoutes)
 
+
+// ── Jobs y broadcasts automáticos ──────────────────────
+import { startStateEngine } from './jobs/stateEngine'
+import { startEmailReminders } from './jobs/emailReminders'
+import { startTimerBroadcast } from './sockets/tableEvents'
+
+
 // WebSocket eventos
 io.on('connection', (socket) => {
   console.log(`🔌 Cliente conectado: ${socket.id}`)
@@ -59,4 +66,9 @@ const PORT = process.env.PORT || 3000
 httpServer.listen(PORT, () => {
   console.log(`🚀 Servidor BLIX en http://localhost:${PORT}`)
   console.log(`📊 Health: http://localhost:${PORT}/health`)
+
+  // Arrancar procesos automáticos DESPUÉS de que el servidor inicia
+  startStateEngine()
+  startEmailReminders()
+  startTimerBroadcast()
 })

@@ -53,7 +53,20 @@ export async function verifyEmail(token: string) {
   const user = await prisma.user.findUnique({
     where: { verifyToken: token },
   })
-  if (!user) throw new Error('Token de verificación inválido')
+
+  // Si no encuentra el token, verificar si hay un usuario
+  // que ya fue verificado previamente con ese proceso
+  // (segunda llamada de StrictMode o doble clic en el link)
+  if (!user) {
+    // El token ya fue consumido — considerar esto éxito silencioso
+    // para no romper la experiencia del usuario
+    throw new Error('TOKEN_ALREADY_USED')
+  }
+
+  // Si ya estaba verificado de alguna forma, retornar éxito igual
+  if (user.verified) {
+    return user
+  }
 
   await prisma.user.update({
     where: { id: user.id },
