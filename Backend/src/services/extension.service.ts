@@ -3,9 +3,6 @@ import { getIO } from '../configs/socket'
 import { hasTimeConflict } from '../utils/timeUtils'
 import { sendExtensionApprovedEmail, sendExtensionRejectedEmail } from './email.service'
 
-// Agrega estas dos funciones al final de email.service.ts (las muestro abajo)
-// Por ahora las importamos — las agregaremos al email service en el siguiente paso
-
 export async function requestExtension(reservationId: string, userId: string) {
   const reservation = await prisma.reservation.findUnique({
     where: { id: reservationId },
@@ -14,7 +11,8 @@ export async function requestExtension(reservationId: string, userId: string) {
 
   if (!reservation) throw new Error('Reserva no encontrada')
   if (reservation.userId !== userId) throw new Error('No es tu reserva')
-  if (reservation.status !== 'ACTIVE') {
+  //permite extender si está ACTIVE o ya fue EXTENDED antes
+  if (reservation.status !== 'ACTIVE' && reservation.status !== 'EXTENDED') {
     throw new Error('Solo puedes extender reservas activas')
   }
 

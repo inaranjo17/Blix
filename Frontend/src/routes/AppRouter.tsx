@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from './ProtectedRoute'
+import { QRGeneratorPage } from '../pages/admin/QRGenerator'
 
 // Pages
 import { HomePage }           from '../pages/Home'
@@ -54,6 +55,15 @@ export function AppRouter() {
             <AdminDashboard />
           </ProtectedRoute>
         }
+      />
+
+      <Route
+      path="/admin/qr"
+      element={
+      <ProtectedRoute requireAdmin>
+        <QRGeneratorPage />
+        </ProtectedRoute>
+      }
       />
 
       {/* Fallback */}
