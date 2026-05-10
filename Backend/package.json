@@ -4,8 +4,9 @@
   "description": "BLIX - Smart Table Reservation System - Backend",
   "main": "server.js",
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "nodemon --exec ts-node src/server.ts",
-    "build": "npx prisma generate && tsc",
+    "build": "tsc",
     "start": "node dist/server.js",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
