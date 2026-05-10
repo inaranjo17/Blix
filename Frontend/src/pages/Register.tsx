@@ -5,7 +5,6 @@ import axios from 'axios'
 
 export function RegisterPage() {
   const navigate = useNavigate()
-
   const [name,     setName]     = useState('')
   const [email,    setEmail]    = useState('')
   const [phone,    setPhone]    = useState('')
@@ -25,8 +24,7 @@ export function RegisterPage() {
       if (axios.isAxiosError(err)) {
         const data = err.response?.data
         if (data?.error && typeof data.error === 'object') {
-          const msgs = Object.values(data.error).flat().join(' · ')
-          setError(msgs as string)
+          setError(Object.values(data.error).flat().join(' · ') as string)
         } else {
           setError(data?.error ?? 'Error al registrar')
         }
@@ -40,27 +38,34 @@ export function RegisterPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-blix-dark flex items-center justify-center p-6">
-        <div className="w-full max-w-md text-center">
-          <div className="w-20 h-20 bg-green-500/10 border border-green-500/20 rounded-full
-                          flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      <div className="min-h-screen bg-blix-bone flex items-center
+                      justify-center p-6 font-sans">
+        <div className="bg-white rounded-3xl border-2 border-ui-border
+                        shadow-xl w-full max-w-md p-10 text-center">
+          <div className="w-20 h-20 bg-state-free/10 border-2 border-state-free/30
+                          rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-9 h-9" style={{ color: '#06D6A0' }}
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
-          <h2 className="text-white text-2xl font-bold mb-2">¡Revisa tu correo!</h2>
-          <p className="text-gray-400 text-sm mb-2">
+          <h2 className="font-display text-blix-carbon mb-2"
+              style={{ fontSize: '2rem', fontWeight: 600 }}>
+            ¡Revisa tu correo!
+          </h2>
+          <p className="text-ui-muted text-sm mb-1">
             Enviamos un enlace de verificación a
           </p>
-          <p className="text-blix-amber font-semibold mb-6">{email}</p>
-          <p className="text-gray-500 text-xs mb-8">
-            Haz clic en el enlace del correo para activar tu cuenta.
-            Si no lo ves, revisa tu carpeta de spam.
+          <p className="text-blix-red font-semibold mb-6 text-sm">{email}</p>
+          <p className="text-ui-muted text-xs mb-8 leading-relaxed">
+            Haz clic en el enlace para activar tu cuenta.
+            Si no lo ves, revisa spam.
           </p>
           <button
             onClick={() => navigate('/login')}
-            className="bg-blix-amber text-blix-dark font-bold px-8 py-3 rounded-xl
-                       hover:bg-blix-amber-light transition-all shadow-lg shadow-amber-500/20"
+            className="bg-blix-red text-white font-bold px-8 py-3 rounded-xl
+                       hover:bg-blix-red-dark transition-all shadow-lg shadow-red-200"
           >
             Ir a iniciar sesión
           </button>
@@ -70,137 +75,130 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-blix-dark flex">
+    <div className="min-h-screen bg-blix-bone flex font-sans">
 
       {/* Panel izquierdo */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden
-                      bg-gradient-to-br from-[#0c1f4a] via-blix-dark to-[#1a0a2e]
-                      flex-col items-center justify-center p-12">
-
-        <div className="absolute inset-0 opacity-5"
+      <div className="hidden lg:flex lg:w-1/2 bg-blix-charcoal flex-col
+                      items-center justify-center p-12 relative overflow-hidden">
+        <div className="absolute inset-0"
           style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f59e0b' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundImage: `
+              radial-gradient(ellipse at 80% 20%, rgba(239,35,60,0.2) 0%, transparent 55%),
+              radial-gradient(ellipse at 20% 80%, rgba(6,214,160,0.12) 0%, transparent 55%)`,
           }}
         />
-
-        <div className="relative z-10 text-center max-w-xs">
-          <div className="text-6xl mb-6 animate-float">🏬</div>
-          <h2 className="text-white text-3xl font-bold mb-3">
-            Encuentra tu mesa perfecta
+        <div className="relative z-10 max-w-sm">
+          <div className="text-5xl mb-6 text-center">🍽️</div>
+          <h2 className="font-display text-white text-center mb-4"
+              style={{ fontSize: '2.2rem', fontWeight: 600, lineHeight: 1.1 }}>
+            Tu mesa, tu momento
           </h2>
-          <p className="text-gray-400 text-sm leading-relaxed mb-8">
-            Únete a cientos de visitantes que ya reservan su mesa en el Centro Comercial
-            antes de llegar, sin filas ni esperas.
+          <p className="text-white/50 text-sm text-center leading-relaxed mb-10">
+            Únete y reserva tu mesa sin filas, sin esperas.
+            Directo a comer.
           </p>
-
-          <div className="space-y-3 text-left">
+          <div className="space-y-4">
             {[
-              { step: '1', title: 'Crea tu cuenta', desc: 'Gratis, en 30 segundos' },
-              { step: '2', title: 'Elige tu mesa', desc: 'Ve el mapa en tiempo real' },
-              { step: '3', title: 'Haz check-in', desc: 'Escanea el QR al llegar' },
+              { step: '1', title: 'Crea tu cuenta', sub: 'Gratis, 30 segundos' },
+              { step: '2', title: 'Elige tu mesa', sub: 'Mapa en tiempo real' },
+              { step: '3', title: 'Haz check-in', sub: 'Escanea el QR al llegar' },
             ].map(s => (
               <div key={s.step} className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-full bg-blix-amber/20 border border-blix-amber/30
-                                flex items-center justify-center text-blix-amber text-sm font-bold shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-blix-red/20 border border-blix-red/30
+                                flex items-center justify-center font-display text-blix-red
+                                font-semibold shrink-0" style={{ fontSize: '1.1rem' }}>
                   {s.step}
                 </div>
                 <div>
                   <div className="text-white text-sm font-semibold">{s.title}</div>
-                  <div className="text-gray-500 text-xs">{s.desc}</div>
+                  <div className="text-white/40 text-xs">{s.sub}</div>
                 </div>
               </div>
             ))}
           </div>
         </div>
-
-        <div className="absolute bottom-8 flex items-center gap-2 opacity-30">
-          <div className="w-5 h-5 bg-blix-amber rounded-md" />
-          <span className="text-white font-bold text-sm">BLIX</span>
-        </div>
       </div>
 
-      {/* Panel derecho — formulario */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-y-auto">
+      {/* Panel derecho */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center
+                      p-6 overflow-y-auto">
         <div className="w-full max-w-sm py-8">
 
-          <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-8 h-8 bg-blix-amber rounded-lg flex items-center justify-center">
+          <Link to="/" className="flex items-center gap-2 mb-8 lg:hidden">
+            <div className="w-8 h-8 bg-blix-red rounded-lg flex items-center justify-center">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <rect x="1" y="1" width="6" height="6" rx="1.5" fill="#0f172a"/>
-                <rect x="9" y="1" width="6" height="6" rx="1.5" fill="#0f172a"/>
-                <rect x="1" y="9" width="6" height="6" rx="1.5" fill="#0f172a"/>
-                <rect x="9" y="9" width="6" height="6" rx="1.5" fill="#0f172a" opacity="0.4"/>
+                <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white"/>
+                <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white"/>
+                <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white"/>
               </svg>
             </div>
-            <span className="text-white font-bold text-lg">BLIX</span>
-          </div>
+            <span className="font-sans font-black text-blix-carbon text-lg">BLIX</span>
+          </Link>
 
-          <h1 className="text-white text-2xl font-bold mb-1">Crear cuenta</h1>
-          <p className="text-gray-400 text-sm mb-7">
-            Es gratis y solo toma un momento
+          <h1 className="font-display text-blix-carbon mb-1"
+              style={{ fontSize: '2rem', fontWeight: 600 }}>
+            Crear cuenta
+          </h1>
+          <p className="text-ui-muted text-sm mb-7">
+            Gratis · Sin tarjeta de crédito
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-3">
             {[
-              { label: 'Nombre completo', type: 'text', value: name, onChange: setName, placeholder: 'María García' },
-              { label: 'Correo electrónico', type: 'email', value: email, onChange: setEmail, placeholder: 'tu@email.com' },
-              { label: 'Número de celular', type: 'tel', value: phone, onChange: setPhone, placeholder: '3001234567' },
-            ].map(field => (
-              <div key={field.label}>
-                <label className="block text-gray-300 text-sm font-medium mb-1.5">
-                  {field.label}
+              { label: 'Nombre completo', type: 'text',  val: name,  set: setName,  ph: 'María García' },
+              { label: 'Correo electrónico', type: 'email', val: email, set: setEmail, ph: 'tu@email.com' },
+              { label: 'Número de celular', type: 'tel',  val: phone, set: setPhone, ph: '3001234567' },
+            ].map(f => (
+              <div key={f.label}>
+                <label className="block text-blix-carbon text-sm font-semibold mb-1.5">
+                  {f.label}
                 </label>
                 <input
-                  type={field.type}
-                  value={field.value}
-                  onChange={e => field.onChange(e.target.value)}
-                  placeholder={field.placeholder}
-                  required
-                  className="w-full bg-white/5 border border-white/10 text-white placeholder-gray-600
-                             rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2
-                             focus:ring-blix-amber/50 focus:border-blix-amber/50 transition"
+                  type={f.type} value={f.val} required
+                  onChange={e => f.set(e.target.value)}
+                  placeholder={f.ph}
+                  className="w-full border-2 border-ui-border bg-white text-blix-carbon
+                             placeholder-ui-muted rounded-xl px-4 py-3 text-sm
+                             focus:outline-none focus:border-blix-red transition-colors"
                 />
               </div>
             ))}
 
             <div>
-              <label className="block text-gray-300 text-sm font-medium mb-1.5">
+              <label className="block text-blix-carbon text-sm font-semibold mb-1.5">
                 Contraseña
               </label>
               <input
-                type="password"
-                value={password}
+                type="password" value={password} required minLength={6}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Mínimo 6 caracteres"
-                required
-                minLength={6}
-                className="w-full bg-white/5 border border-white/10 text-white placeholder-gray-600
-                           rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2
-                           focus:ring-blix-amber/50 focus:border-blix-amber/50 transition"
+                className="w-full border-2 border-ui-border bg-white text-blix-carbon
+                           placeholder-ui-muted rounded-xl px-4 py-3 text-sm
+                           focus:outline-none focus:border-blix-red transition-colors"
               />
             </div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-400
-                              rounded-xl px-4 py-3 text-sm">
+              <div className="bg-red-50 border-2 border-blix-red/20 text-blix-red
+                              rounded-xl px-4 py-3 text-sm font-medium">
                 {error}
               </div>
             )}
 
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blix-amber text-blix-dark font-bold py-3 rounded-xl
-                         hover:bg-blix-amber-light transition-all shadow-lg shadow-amber-500/20
-                         disabled:opacity-50 disabled:cursor-not-allowed text-sm mt-2"
+              type="submit" disabled={loading}
+              className="w-full bg-blix-red text-white font-bold py-3.5 rounded-xl
+                         hover:bg-blix-red-dark transition-all shadow-lg shadow-red-200
+                         disabled:opacity-50 text-sm mt-2"
             >
               {loading ? 'Creando cuenta...' : 'Crear cuenta gratis'}
             </button>
           </form>
 
-          <p className="text-center text-gray-500 text-sm mt-6">
+          <p className="text-center text-ui-muted text-sm mt-6">
             ¿Ya tienes cuenta?{' '}
-            <Link to="/login" className="text-blix-amber hover:text-blix-amber-light font-semibold transition">
+            <Link to="/login"
+                  className="text-blix-red font-semibold hover:text-blix-red-dark transition">
               Inicia sesión
             </Link>
           </p>

@@ -8,12 +8,7 @@ import type { Duration } from '../constants/durations'
 import type { ApiError } from '../@types'
 import axios from 'axios'
 
-// Tipo definido fuera del componente — evita el problema del genérico multilinea
-type Alternative = {
-  id: string
-  zone: string
-  capacity: number
-}
+type Alternative = { id: string; zone: string; capacity: number }
 
 export function ReservePage() {
   const { tableId } = useParams<{ tableId: string }>()
@@ -24,103 +19,96 @@ export function ReservePage() {
   const [startTime,     setStartTime]     = useState('')
   const [loading,       setLoading]       = useState(false)
   const [error,         setError]         = useState('')
+  const [alternatives,  setAlternatives]  = useState<Alternative[]>([])
 
-  const [alternatives, setAlternatives] = useState<Alternative[]>([])
-
-  // ✅ useState lazy initializer — Date.now() se ejecuta una sola vez al montar,
-  // no en cada re-render. React 19 lo permite porque es un initializer, no render.
   const [minDateTime] = useState<string>(() =>
     new Date(Date.now() + 60_000).toISOString().slice(0, 16)
   )
 
   async function handleSubmit() {
-    if (!startTime) {
-      setError('Selecciona una hora de inicio')
-      return
-    }
+    if (!startTime) { setError('Selecciona una hora de inicio'); return }
     if (!token || !tableId) return
-
-    setError('')
-    setAlternatives([])
-    setLoading(true)
-
+    setError(''); setAlternatives([]); setLoading(true)
     try {
-      const reservation = await reservationApi.create(token, {
+      const r = await reservationApi.create(token, {
         tableId,
         startTime: new Date(startTime).toISOString(),
         duration,
       })
-      navigate('/mis-reservas', {
-        state: { successCode: reservation.code, tableId },
-      })
+      navigate('/mis-reservas', { state: { successCode: r.code, tableId } })
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        const data = err.response?.data as ApiError
-        if (data?.alternatives && data.alternatives.length > 0) {
-          setAlternatives(data.alternatives)
-          // ✅ Corregido: data.error (no data.message — ApiError no tiene .message)
-          setError(data.error ?? 'Horario ocupado para esta mesa')
+        const d = err.response?.data as ApiError
+        if (d?.alternatives?.length) {
+          setAlternatives(d.alternatives)
+          setError(d.error ?? 'Horario ocupado para esta mesa')
         } else {
-          setError(data?.error ?? 'Error al crear la reserva')
+          setError(d?.error ?? 'Error al crear la reserva')
         }
-      } else {
-        setError('Error inesperado')
-      }
-    } finally {
-      setLoading(false)
-    }
+      } else { setError('Error inesperado') }
+    } finally { setLoading(false) }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-blix-bone font-sans">
       <Navbar />
-
       <div className="max-w-md mx-auto px-4 py-8">
-        <button
-          onClick={() => navigate('/')}
-          className="text-blix-blue text-sm mb-4 hover:underline flex items-center gap-1"
-        >
-          ← Volver al mapa
+
+        <button onClick={() => navigate('/mapa')}
+          className="flex items-center gap-1.5 text-ui-muted hover:text-blix-red
+                     text-sm font-medium mb-5 transition-colors">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M15 19l-7-7 7-7" />
+          </svg>
+          Volver al mapa
         </button>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h1 className="text-xl font-bold text-blix-dark mb-1">
-            Reservar Mesa {tableId}
-          </h1>
-          <p className="text-gray-500 text-sm mb-6">
-            Elige cuándo y por cuánto tiempo necesitas la mesa.
-          </p>
+        <div className="bg-white rounded-3xl border-2 border-ui-border shadow-lg p-6">
 
-          <div className="mb-5">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Hora de inicio
-            </label>
-            <input
-              type="datetime-local"
-              value={startTime}
-              min={minDateTime}
-              onChange={e => setStartTime(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5
-                         focus:outline-none focus:ring-2 focus:ring-blix-blue transition"
-            />
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-blix-carbon rounded-2xl flex items-center
+                            justify-center">
+              <span className="font-display text-white font-semibold text-lg">
+                {tableId}
+              </span>
+            </div>
+            <div>
+              <h1 className="font-display text-blix-carbon"
+                  style={{ fontSize: '1.5rem', fontWeight: 600 }}>
+                Reservar Mesa {tableId}
+              </h1>
+              <p className="text-ui-muted text-xs mt-0.5">
+                Elige tu horario y duración
+              </p>
+            </div>
           </div>
 
+          {/* Hora */}
+          <div className="mb-5">
+            <label className="block text-blix-carbon text-sm font-bold mb-1.5">
+              Hora de inicio
+            </label>
+            <input type="datetime-local" value={startTime} min={minDateTime}
+              onChange={e => setStartTime(e.target.value)}
+              className="w-full border-2 border-ui-border bg-white text-blix-carbon
+                         rounded-xl px-4 py-3 text-sm focus:outline-none
+                         focus:border-blix-red transition-colors"/>
+          </div>
+
+          {/* Duración */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-blix-carbon text-sm font-bold mb-2">
               Duración
             </label>
             <div className="grid grid-cols-3 gap-2">
               {DURATIONS.map(d => (
-                <button
-                  key={d.value}
+                <button key={d.value}
                   onClick={() => setDuration(d.value as Duration)}
-                  className={`
-                    py-2.5 rounded-lg text-sm font-medium border transition
+                  className={`py-3 rounded-xl text-sm font-bold border-2 transition-all
                     ${duration === d.value
-                      ? 'bg-blix-blue text-white border-blix-blue'
-                      : 'bg-white text-gray-700 border-gray-300 hover:border-blix-blue'}
-                  `}
-                >
+                      ? 'bg-blix-red text-white border-blix-red shadow-md shadow-red-200'
+                      : 'bg-white text-blix-carbon border-ui-border hover:border-blix-red'}`}>
                   {d.label}
                 </button>
               ))}
@@ -128,30 +116,25 @@ export function ReservePage() {
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700
-                            rounded-lg px-4 py-3 text-sm mb-4">
+            <div className="bg-red-50 border-2 border-blix-red/20 text-blix-red
+                            rounded-xl px-4 py-3 text-sm font-medium mb-4">
               {error}
             </div>
           )}
 
           {alternatives.length > 0 && (
-            <div className="mb-4">
-              <p className="text-sm font-medium text-gray-700 mb-2">
+            <div className="mb-5">
+              <p className="text-sm font-bold text-blix-carbon mb-2">
                 Mesas disponibles del mismo tamaño:
               </p>
               <div className="space-y-2">
                 {alternatives.map(alt => (
-                  <button
-                    key={alt.id}
-                    onClick={() => {
-                      setAlternatives([])
-                      setError('')
-                      navigate(`/reserve/${alt.id}`)
-                    }}
-                    className="w-full text-left border border-green-300 bg-green-50
-                               hover:bg-green-100 text-green-800 rounded-lg px-4 py-2.5
-                               text-sm transition"
-                  >
+                  <button key={alt.id}
+                    onClick={() => { setAlternatives([]); setError(''); navigate(`/reserve/${alt.id}`) }}
+                    className="w-full text-left border-2 bg-state-free/5
+                               hover:bg-state-free/15 rounded-xl px-4 py-2.5 text-sm
+                               font-medium transition-colors"
+                    style={{ borderColor: '#06D6A0', color: '#2B2D42' }}>
                     Mesa {alt.id} — Zona {alt.zone} · ×{alt.capacity} personas
                   </button>
                 ))}
@@ -159,18 +142,16 @@ export function ReservePage() {
             </div>
           )}
 
-          <button
-            onClick={handleSubmit}
+          <button onClick={handleSubmit}
             disabled={loading || !startTime}
-            className="w-full bg-blix-blue text-white font-semibold py-2.5
-                       rounded-lg hover:bg-blue-700 transition
-                       disabled:opacity-60 disabled:cursor-not-allowed"
-          >
+            className="w-full bg-blix-red text-white font-bold py-3.5 rounded-xl
+                       hover:bg-blix-red-dark transition-all shadow-lg shadow-red-200
+                       disabled:opacity-50 disabled:cursor-not-allowed text-sm">
             {loading ? 'Reservando...' : 'Confirmar reserva'}
           </button>
 
-          <p className="text-xs text-gray-400 text-center mt-3">
-            Recibirás un código de reserva por correo electrónico.
+          <p className="text-xs text-ui-muted text-center mt-3">
+            Recibirás el código de reserva por correo electrónico
           </p>
         </div>
       </div>

@@ -1,64 +1,83 @@
 import type { TableState } from '../@types'
 
 export interface StateConfig {
-  color: string          // clase Tailwind bg-*
-  border: string         // clase Tailwind border-*
-  label: string          // texto visible al usuario
-  publicState: TableState // estado que ve el público
+  color: string       // hex color for the state dot/badge
+  bgClass: string     // tailwind bg class (light tint)
+  borderClass: string // tailwind border class
+  textClass: string   // tailwind text class
+  label: string       // visible user label
+  publicState: TableState
 }
 
 export const STATE_CONFIG: Record<TableState, StateConfig> = {
   FREE: {
-    color: 'bg-green-500',
-    border: 'border-green-400',
+    color: '#06D6A0',
+    bgClass: 'bg-[#06D6A0]/12',
+    borderClass: 'border-[#06D6A0]/40',
+    textClass: 'text-[#027A5C]',
     label: 'Libre',
     publicState: 'FREE',
   },
   RESERVED: {
-    color: 'bg-yellow-400',
-    border: 'border-yellow-300',
+    color: '#FFB703',
+    bgClass: 'bg-[#FFB703]/12',
+    borderClass: 'border-[#FFB703]/40',
+    textClass: 'text-[#9A6E00]',
     label: 'Reservada',
     publicState: 'RESERVED',
   },
   PENDING_CONFIRM: {
-    color: 'bg-yellow-400',
-    border: 'border-yellow-300',
-    label: 'Reservada',          // el público ve amarillo igual
+    color: '#8B5CF6',
+    bgClass: 'bg-[#8B5CF6]/10',
+    borderClass: 'border-[#8B5CF6]/35',
+    textClass: 'text-[#5B21B6]',
+    label: 'Reservada',
     publicState: 'RESERVED',
   },
   LEGITIMATELY_OCCUPIED: {
-    color: 'bg-red-500',
-    border: 'border-red-400',
+    color: '#F97316',
+    bgClass: 'bg-[#F97316]/10',
+    borderClass: 'border-[#F97316]/35',
+    textClass: 'text-[#9A4504]',
     label: 'En uso',
     publicState: 'LEGITIMATELY_OCCUPIED',
   },
   OCCUPIED_NO_RESERVATION: {
-    color: 'bg-blue-500',
-    border: 'border-blue-400',
+    color: '#EF233C',
+    bgClass: 'bg-[#EF233C]/10',
+    borderClass: 'border-[#EF233C]/35',
+    textClass: 'text-[#9B0E1E]',
     label: 'Ocupada',
     publicState: 'OCCUPIED_NO_RESERVATION',
   },
   CONFLICT: {
-    color: 'bg-red-500',         // el público ve rojo (no naranja)
-    border: 'border-red-400',
+    // public view: aparece como "En uso" (rojo)
+    color: '#EF233C',
+    bgClass: 'bg-[#EF233C]/10',
+    borderClass: 'border-[#EF233C]/35',
+    textClass: 'text-[#9B0E1E]',
     label: 'En uso',
     publicState: 'LEGITIMATELY_OCCUPIED',
   },
   NO_SIGNAL: {
-    color: 'bg-gray-400',
-    border: 'border-gray-300',
+    color: '#9CA3AF',
+    bgClass: 'bg-gray-100',
+    borderClass: 'border-gray-200',
+    textClass: 'text-gray-500',
     label: 'Sin señal',
     publicState: 'NO_SIGNAL',
   },
 }
 
-// Para el admin — ve CONFLICT en naranja
+// Admin ve CONFLICT en carmesí con ícono de alerta
 export const ADMIN_STATE_CONFIG: Record<TableState, StateConfig> = {
   ...STATE_CONFIG,
   CONFLICT: {
-    color: 'bg-orange-500',
-    border: 'border-orange-400',
-    label: '⚠️ Conflicto',
+    color: '#E11D48',
+    bgClass: 'bg-[#E11D48]/10',
+    borderClass: 'border-[#E11D48]/40',
+    textClass: 'text-[#9F1239]',
+    label: '⚠ Conflicto',
     publicState: 'CONFLICT',
   },
 }
