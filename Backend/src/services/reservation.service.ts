@@ -15,7 +15,7 @@ export async function createReservation(
   const now = new Date()
 
   // No permitir reservas en el pasado
-  if (start < now) {
+  if (start < new Date(now.getTime() - 5 * 60_000)) {
     throw new Error('No puedes reservar en una hora pasada')
   }
 
