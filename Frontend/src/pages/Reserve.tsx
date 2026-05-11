@@ -31,12 +31,19 @@ export function ReservePage() {
     if (!startTime) { setError('Selecciona una hora de inicio'); return }
     if (!token || !tableId) return
     setError(''); setAlternatives([]); setLoading(true)
+    
+    const [datePart, timePart] = startTime.split('T')
+    const [year, month, day]   = datePart.split('-').map(Number)
+    const [hours, minutes]     = timePart.split(':').map(Number)
+    const localDate = new Date(year, month - 1, day, hours, minutes)
+    
     try {
       const r = await reservationApi.create(token, {
         tableId,
-        startTime: new Date(startTime).toISOString(),
+        startTime: localDate.toISOString(), // ahora sí es UTC correcto
         duration,
       })
+      
       navigate('/mis-reservas', { state: { successCode: r.code, tableId } })
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
