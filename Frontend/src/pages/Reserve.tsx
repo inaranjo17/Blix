@@ -20,10 +20,12 @@ export function ReservePage() {
   const [loading,       setLoading]       = useState(false)
   const [error,         setError]         = useState('')
   const [alternatives,  setAlternatives]  = useState<Alternative[]>([])
-
-  const [minDateTime] = useState<string>(() =>
-    new Date(Date.now() + 60_000).toISOString().slice(0, 16)
-  )
+  
+  const [minDateTime] = useState<string>(() => {
+    const d = new Date(Date.now() + 60_000)
+    const pad = (n: number) => String(n).padStart(2, '0')
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+  })
 
   async function handleSubmit() {
     if (!startTime) { setError('Selecciona una hora de inicio'); return }
